@@ -27,6 +27,7 @@ void AtualizaBalas (struct Projeteis balas[], int tamanho);
 void DesenhaBalas (struct Projeteis balas[], int tamanho);
 
 int main() {
+//    al_init();
     //VARIAVEIS DO JOGO
     ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
     ALLEGRO_TIMER *timer = NULL;
@@ -37,7 +38,7 @@ int main() {
 
     //INICIALIZAÇÃO DE OBJETOS
     struct NaveEspacial nave;
-    struct Projeteis bala[NUM_BALAS];
+    struct Projeteis balas[NUM_BALAS];
 
     //INICIALIZAÇÃO DA ALLEGRO E DO DISPLAY
     ALLEGRO_DISPLAY *display = NULL;
@@ -69,6 +70,7 @@ int main() {
 
     //FUNÇÕES INICIAIS
     InitNave(nave);
+    InitBalas(balas, NUM_BALAS);
 
     //LOOP PRINCIPAL
     al_start_timer(timer);
@@ -105,6 +107,7 @@ int main() {
 
                 case ALLEGRO_KEY_SPACE:
                     teclas[SPACE] = true;
+                    AtiraBalas(balas, NUM_BALAS, nave);
                     break;
             }
         }
@@ -142,6 +145,8 @@ int main() {
                 MoveNaveDireita(nave);
             if(teclas[ESQUERDA])
                 MoveNaveEsquerda(nave);
+            if(teclas[SPACE])
+                AtualizaBalas(balas, NUM_BALAS);
         }
 
         //DESENHO
@@ -149,14 +154,101 @@ int main() {
             desenha = false;
 
             DesenhaNave(nave);
+            DesenhaBalas(balas, NUM_BALAS);
 
             al_flip_display();
             al_clear_to_color(al_map_rgb(0,0,0));
         }
 
-           
+
 
     }
 
+    //FINALIZAÇÕES DO PROGRAMA
+    al_destroy_display(display);
+    al_destroy_event_queue(fila_eventos);
+    al_destroy_timer(timer);
+
     return 0;
 }
+
+//DEFINIÇÃO DE FUNÇÕES E PROCEDIMENTOS
+
+//NAVE
+void InitNave(struct NaveEspacial nave){
+    nave.x = 20;
+    nave.y = altura_t/2;
+    nave.ID = JOGADOR;
+    nave.vidas = 3;
+    nave.borda_x = 6;
+    nave.borda_y = 7;
+    nave.pontos = 0;
+}
+
+void DesenhaNave(struct NaveEspacial nave){
+    al_draw_filled_rectangle(nave.x, nave.y - 9, nave.x + 10, nave.y - 7, al_map_rgb(255, 0, 0));
+    al_draw_filled_rectangle(nave.x, nave.y + 9, nave.x + 10, nave.y + 7, al_map_rgb(255, 0, 0));
+    al_draw_filled_triangle(nave.x - 12, nave.y - 17, nave.x + 12, nave.y - 12, nave.x + 12, nave.y + 17, al_map_rgb(0, 255, 0));
+    al_draw_filled_rectangle(nave.x - 12, nave.y - 2, nave.x + 15, nave.y + 2, al_map_rgb(0, 0, 255));
+}
+
+void MoveNaveCima(struct NaveEspacial nave){
+    nave.y -= nave.velocidade;
+    if(nave.y < 20)
+        nave.y = 20;
+}
+
+void MoveNaveBaixo(struct NaveEspacial nave){
+    nave.y += nave.velocidade;
+    if(nave.y > altura_t - 20)
+        nave.y = altura_t - 20;
+}
+
+void MoveNaveDireita(struct NaveEspacial nave){
+    nave.x += nave.velocidade;
+    if(nave.x > 300)
+        nave.x = 300;
+}
+
+void MoveNaveEsquerda(struct NaveEspacial nave){
+    nave.x -= nave.velocidade;
+    if(nave.x < 12)
+        nave.x = 12;
+}
+
+//PROJETEIS
+void InitBalas (struct Projeteis balas[], int tamanho){
+    for(int i = 0; i < tamanho; i++){
+        balas[i].ID = PROJETIL;
+        balas[i].velocidade = 10;
+        balas[i].ativo = false;
+    }
+}
+
+void AtiraBalas (struct Projeteis balas[], int tamanho, struct NaveEspacial nave){
+    for(int i = 0; i < tamanho; i++){
+        if(!balas[i].ativo){
+            balas[i].x = nave.x + 17;
+            balas[i].y = nave.y;
+            balas[i].ativo = true;
+        }
+    }
+}
+void AtualizaBalas (struct Projeteis balas[], int tamanho){
+    for(int i = 0; i < tamanho; i++) {
+        if(balas[i].ativo){
+            balas[i].x += balas[i].velocidade;
+            if(balas[i].x > largura_t)
+                balas[i].ativo = false;
+        }
+    }
+}
+
+void DesenhaBalas (struct Projeteis balas[], int tamanho) {
+    for(int i = 0; i < tamanho; i++) {
+        if(balas[i].ativo){
+            al_draw_filled_circle(balas[i].x, balas[i].y, 2, al_map_rgb(255, 255, 255));
+        }
+    }
+}
+
