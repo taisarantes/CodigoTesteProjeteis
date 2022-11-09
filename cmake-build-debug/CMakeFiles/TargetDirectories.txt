@@ -1,3 +1,0 @@
-C:/Users/alan_/Documents/senacTrabalhos/codigo projeteis/cmake-build-debug/CMakeFiles/codigo_projeteis.dir
-C:/Users/alan_/Documents/senacTrabalhos/codigo projeteis/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/alan_/Documents/senacTrabalhos/codigo projeteis/cmake-build-debug/CMakeFiles/rebuild_cache.dir

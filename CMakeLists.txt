@@ -3,4 +3,6 @@ project(codigo_projeteis C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(codigo_projeteis main.c cmake-build-debug/objetos.h)
+add_executable(codigo_projeteis main.c objetos.h)
+
+target_link_libraries(codigo_projeteis -lmingw32 -lallegro-5.0.10-monolith-md-debug)
